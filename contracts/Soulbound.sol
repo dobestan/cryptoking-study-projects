@@ -28,8 +28,4 @@ contract Soulbound is ERC1155 {
         require(isRegistered(account), "Soulbound: only registered account can call this function.");
         _;
     }
-
-    function registerTest() public view onlyRegistered(msg.sender) returns (uint) {
-        return 1000;
-    }
 }
