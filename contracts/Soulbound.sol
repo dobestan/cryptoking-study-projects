@@ -14,8 +14,22 @@ contract Soulbound is ERC1155 {
     }
 
     // TODO: Access Control(Ownable).
-    // TODO: User can register only once.
     function register(address soul) public {
+        require(balanceOf(soul, REGISTERED) == 0, "Soulbound: only fresh soul can register.");
         _mint(soul, REGISTERED, 1, "");
+    }
+
+    function isRegistered(address account) public view returns (bool) {
+        uint registeredBalance = balanceOf(account, REGISTERED);
+        return registeredBalance == 1;
+    }
+
+    modifier onlyRegistered(address account) {
+        require(isRegistered(account), "Soulbound: only registered account can call this function.");
+        _;
+    }
+
+    function registerTest() public view onlyRegistered(msg.sender) returns (uint) {
+        return 1000;
     }
 }
