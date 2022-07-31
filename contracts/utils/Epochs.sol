@@ -10,6 +10,10 @@ library Epoch {
     struct Epoch {
         address tokenContractAddress;
     }
+
+    function token(Epoch storage self) internal view returns (UtilityToken) {
+        return UtilityToken(self.tokenContractAddress);
+    }
 }
 
 
@@ -23,7 +27,7 @@ library Epochs {
 
     event EpochCreated(uint EpochId, address tokenContractAddress);
 
-    function id(Epochs storage self) public view returns (uint) {
+    function id(Epochs storage self) internal view returns (uint) {
         require(self._epochId.current() > 0, "Epochs: not a single epoch is created.");
         return self._epochId.current();
     }

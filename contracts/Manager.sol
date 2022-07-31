@@ -9,6 +9,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract Manager {
     using Epochs for Epochs.Epochs;
+    using Epoch for Epoch.Epoch;
 
     Epochs.Epochs private _epochs;
 
@@ -26,5 +27,9 @@ contract Manager {
 
     function getEpoch(uint _epochId) public view returns (Epoch.Epoch memory) {
         return _epochs.get(_epochId);
+    }
+
+    function token() public view returns (UtilityToken) {
+        return _epochs.current().token();
     }
 }
