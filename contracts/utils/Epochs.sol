@@ -17,6 +17,9 @@ library Epoch {
 }
 
 
+/// @title A implementation for epochs.
+/// @author Suchan An
+/// @dev SOC(Separation of Concerns) for epochs management.
 library Epochs {
     using Counters for Counters.Counter;
 
