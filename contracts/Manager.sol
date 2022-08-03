@@ -12,13 +12,20 @@ contract Manager {
     using Epochs for Epochs.Epochs;
     using Epoch for Epoch.Epoch;
 
+    struct Match {
+        address account0;
+        address account1;
+        uint matchedAt;
+    }
+
     Epochs.Epochs private _epochs;
     address private _soulboundAddress;
 
     // #TODO: address => address => Match struct.
     // #IDEA: Uniswap V2: createPair, getPair, allPairs.
     // #TODO: (1) Match Struct, (2) Match[] private _allMatches;
-    mapping(address => mapping(address => bool)) private _matches;
+    mapping(address => mapping(address => bool)) private _isMatched;
+    Match[] private matches;
 
     constructor() {
         // Initiate SBT(SoulBound Token) contract.
@@ -58,14 +65,24 @@ contract Manager {
         if (isMatched(accountA, accountB)) {
             return false;
         } else {
-            (address address0, address address1) = accountA < accountB ? (accountA, accountB) : (accountB, accountA);
-            _matches[address0][address1] = true;
+            (address address0, address address1) = _asOrderedAddresses(accountA, accountB);
+            _isMatched[address0][address1] = true;
+            Match memory createdMatch = Match(address0, address1, block.timestamp);
+            matches.push(createdMatch);
             return true;
         }
     }
 
     function isMatched(address accountA, address accountB) public view returns (bool) {
-        (address address0, address address1) = accountA < accountB ? (accountA, accountB) : (accountB, accountA);
-        return _matches[address0][address1];
+        (address address0, address address1) = _asOrderedAddresses(accountA, accountB);
+        return _isMatched[address0][address1];
+    }
+
+    function getMatch(uint _matchId) public view returns (Match memory) {
+        return matches[_matchId];
+    }
+
+    function _asOrderedAddresses(address accountA, address accountB) internal pure returns (address, address) {
+        return accountA < accountB ? (accountA, accountB) : (accountB, accountA);
     }
 }
