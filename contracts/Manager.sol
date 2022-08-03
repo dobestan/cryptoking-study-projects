@@ -73,6 +73,17 @@ contract Manager {
         }
     }
 
+    function batchCreateMatch(address[] memory accountAs, address[] memory accountBs) public {
+        require(accountAs.length == accountBs.length, "Manager: matching addresses length mismatch");
+        for (uint _i = 0; _i < accountAs.length; _i++) {
+            address accountA = accountAs[_i];
+            address accountB = accountBs[_i];
+            createMatch(accountA, accountB);
+        }
+        // TODO: returns bool[] result
+        // TODO: safeCreateMatch, safeBatchCreateMatch
+    }
+
     function isMatched(address accountA, address accountB) public view returns (bool) {
         (address address0, address address1) = _asOrderedAddresses(accountA, accountB);
         return _isMatched[address0][address1];
