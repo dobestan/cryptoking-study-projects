@@ -4,9 +4,9 @@ pragma solidity >=0.8.0;
 
 import "./Soulbound.sol";
 import "./UtilityToken.sol";
-import "./utils/Epochs.sol";
+
 import "./utils/Matches.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
+import "./utils/Epochs.sol";
 
 
 contract Manager {
