@@ -10,6 +10,8 @@ contract Soulbound is ERC1155, Ownable {
     uint public constant REGISTERED = 0;
     // uint public constant SOMETHING_TRANSFERABLE = 1;
 
+    event Register(address indexed soul);
+
     mapping(uint => bool) public isTransferable;
 
     constructor() ERC1155("") {
@@ -38,6 +40,7 @@ contract Soulbound is ERC1155, Ownable {
     function register(address soul) public onlyOwner {
         require(balanceOf(soul, REGISTERED) == 0, "Soulbound: only fresh soul can register.");
         _mint(soul, REGISTERED, 1, "");
+        emit Register(soul);
     }
 
     function isRegistered(address account) public view returns (bool) {

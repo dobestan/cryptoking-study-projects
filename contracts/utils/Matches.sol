@@ -9,9 +9,16 @@ library Match {
         uint matchedAt;
     }
 
+    event MatchCreated(address indexed accountA, address indexed accountB);
+
     function create(address accountA, address accountB) public returns (Match memory) {
         (address address0, address address1) = _asOrderedAddresses(accountA, accountB);
         Match memory createdMatch = Match(address0, address1, block.timestamp);
+        
+        // Emit duplciated MatchCreated events with contrary parameter in reverse order.
+        emit MatchCreated(accountA, accountB);
+        emit MatchCreated(accountB, accountA);
+        
         return createdMatch;
     }
 
