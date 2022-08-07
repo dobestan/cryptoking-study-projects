@@ -19,11 +19,11 @@ contract Manager {
     Epochs.Epochs private _epochs;
     address private _soulboundAddress;
 
-    // #TODO: address => address => Match struct.
-    // #IDEA: Uniswap V2: createPair, getPair, allPairs.
-    // #TODO: (1) Match Struct, (2) Match[] private _allMatches;
-    mapping(address => mapping(address => bool)) private _isMatched;
-    Match.Match[] private matches;
+    // Refactor _isMatched;
+    // _isMatched[account1][account2]
+    // AS-IS: mapping(address => mapping(address => bool)) private _isMatched;
+    mapping(address => mapping(address => uint)) private _isMatched;
+    Match.Match[] private _matches;
 
     constructor() {
         // Initiate SBT(SoulBound Token) contract.
@@ -60,20 +60,29 @@ contract Manager {
     }
 
     function createMatch(address accountA, address accountB) public {
-        matches.create(accountA, accountB);
+        _matches.create(accountA, accountB);
+        (address address0, address address1) = Match._asOrderedAddresses(accountA, accountB);
+        _isMatched[address0][address1] = _matches.length;
     }
 
     // Batch Create(Function Overload)
     function createMatch(address[] memory accountAs, address[] memory accountBs) public {
-        matches.create(accountAs, accountBs);
+        _matches.create(accountAs, accountBs);
+        // #TODO: should add to _isMatched;
     }
 
     function isMatched(address accountA, address accountB) public view returns (bool) {
         (address address0, address address1) = Match._asOrderedAddresses(accountA, accountB);
-        return _isMatched[address0][address1];
+        return _isMatched[address0][address1] > 0;
     }
 
     function getMatch(uint _matchId) public view returns (Match.Match memory) {
-        return matches.get(_matchId);
+        return _matches.get(_matchId);
+    }
+
+    function getMatch(address accountA, address accountB) public view returns (Match.Match memory) {
+        (address address0, address address1) = Match._asOrderedAddresses(accountA, accountB);
+        uint matchesId = _isMatched[address0][address1] - 1;
+        return _matches.get(matchesId);
     }
 }
